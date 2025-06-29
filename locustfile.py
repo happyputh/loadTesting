@@ -33,8 +33,11 @@ class PublicTransportNavigationUser(HttpUser):
             "transport": ["bus", "tram", "minibus"]
         }
 
-        self.client.post(
+        response = self.client.post(
             f"/public_transport/2.0?key={API_KEY}",
             data=json.dumps(body),
             name="🧭 Навигация: маршрут A → B"
         )
+        if response.status_code == 429:
+            print("⚠️ 429 Too Many Requests — делаем паузу")
+            self.environment.runner.quit()
